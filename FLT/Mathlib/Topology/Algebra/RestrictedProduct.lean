@@ -274,9 +274,7 @@ variable {ι : Type*} {ℱ : Filter ι} {n : Type*} [Fintype n]
 /-- The bijection between a restricted product of finite products, and a finite product
 of restricted products.
 -/
-def Equiv.restrictedProductPi {ι : Type*} {ℱ : Filter ι} {n : Type*} [Fintype n]
-    {A : n → ι → Type*}
-    {C : (j : n) → (i : ι) → Set (A j i)} :
+def Equiv.restrictedProductPi :
     Πʳ i, [Π j, A j i, {f | ∀ j, f j ∈ C j i}]_[ℱ] ≃ Π j, Πʳ i, [A j i, C j i]_[ℱ] where
   toFun x j := congrRight (fun i t ↦ t _) (by simp +contextual [Set.MapsTo]) x
   invFun y := .mk (fun i j ↦ y j i) (by simp)
@@ -300,11 +298,8 @@ lemma Equiv.continuous_restrictedProductPi [∀ j i, TopologicalSpace (A j i)] :
   fun_prop
 
 /-- A finitary (instead of binary) version of `continuous_dom_prod`. -/
-theorem RestrictedProduct.continuous_dom_pi {n : Type*} [Fintype n] {X : Type*}
-    [TopologicalSpace X] {A : n → ι → Type*}
-    [∀ j i, TopologicalSpace (A j i)]
-    {C : (j : n) → (i : ι) → Set (A j i)}
-    (hCopen : ∀ j i, IsOpen (C j i))
+theorem RestrictedProduct.continuous_dom_pi {X : Type*} [TopologicalSpace X]
+    [∀ j i, TopologicalSpace (A j i)] (hCopen : ∀ j i, IsOpen (C j i))
     {f : (Π j : n, Πʳ i : ι, [A j i, C j i]) → X} :
     Continuous f ↔
       ∀ (S : Set ι) (hS : cofinite ≤ 𝓟 S), Continuous (f ∘ Pi.map fun _ ↦ inclusion _ _ hS) := by
@@ -337,9 +332,8 @@ lemma Equiv.continuous_restrictedProductPi_symm {S : Set ι}
 /-- The homeomorphism between a restricted product of finite products, and a finite product
 of restricted products, when the products are with respect to open subsets.
 -/
-def Homeomorph.restrictedProductPi {ι : Type*} {n : Type*} [Fintype n]
-    {A : n → ι → Type*} [∀ j i, TopologicalSpace (A j i)]
-    {C : (j : n) → (i : ι) → Set (A j i)} (hCopen : ∀ j i, IsOpen (C j i)) :
+def Homeomorph.restrictedProductPi [∀ j i, TopologicalSpace (A j i)]
+    (hCopen : ∀ j i, IsOpen (C j i)) :
     Πʳ i, [Π j, A j i, {f | ∀ j, f j ∈ C j i}] ≃ₜ Π j, (Πʳ i, [A j i, C j i]) where
   __ := Equiv.restrictedProductPi
   continuous_toFun := Equiv.continuous_restrictedProductPi
